@@ -1,0 +1,95 @@
+arena:
+  center:
+    world: world
+    x: 0
+    y: 100
+    z: 0
+  size: 25
+  layers: 4
+  spawn:
+    world: world
+    x: 0
+    y: 105
+    z: 0
+  lobby:
+    world: world
+    x: 0
+    y: 100
+    z: 50
+
+game:
+  mode: DIG
+  auto-remove-percent: 15
+  auto-remove-interval: 10
+  auto-remove-warning: 3
+  min-players: 2
+  max-players: 16
+  fall-threshold: 80
+  give-shovel: true
+  shovel-item: "DIAMOND_SHOVEL"
+  shovel-slot: 0
+  lobby-countdown-seconds: 30
+  warmup-seconds: 10
+  respawn-on-fall: true
+
+respawn-location:
+  world: world
+  x: 0
+  y: 105
+  z: 0
+
+auto-start:
+  enabled: false
+  interval-minutes: 5
+  min-players: 2
+
+command-whitelist:
+  enabled: true
+  allowed-commands:
+    - "/spliff"
+    - "/msg"
+    - "/tell"
+    - "/r"
+    - "/help"
+
+rewards:
+  enabled: true
+  auto-give: true
+  commands:
+    - "say {player} nyerte a Spliff jatekot!"
+  messages:
+    - "&aGratulalunk a gyzelemhez!"
+
+messages:
+  prefix: "&8[&bSpliff&8] &r"
+  no-permission: "&cNincs jogod!"
+  unknown-command: "&cIsmeretlen parancs!"
+  usage: "&cHasznalat: /spliff <start|stop|reload|reward|setspawn|setlobby|setrespawn|join|leave>"
+  spawn-set: "&aSpawn pont beallitva!"
+  lobby-set: "&aLobby pont beallitva!"
+  respawn-set: "&aRespawn pont beallitva!"
+  reload-success: "&aConfig es uzenetek ujratoltve!"
+  game-in-progress: "&cA jatek mar folyamatban van!"
+  player-joined: "&e{player} &acsatlakozott! &7({count}/{max})"
+  player-left: "&e{player} &ckilepett!"
+  not-enough-players: "&cNincs eleg jatekos a kezdéshez! Varakozas..."
+  lobby-countdown: "&aA jatek &e{seconds} &amp;masodperc mul indul! Csatlakozz most!"
+  warmup-start: "&eElokeszules... &7{seconds} masodperc"
+  warmup-actionbar: "&eElokeszules: &c{seconds} &emp"
+  game-started: "&aA jatek elkezdodott! Sok szerencset!"
+  game-mode-info: "&eMod: &f{mode}"
+  player-eliminated: "&c{player} &ckiesett!"
+  player-won: "&a{player} &anyerte a jatekot!"
+  no-winner: "&cNincs nyertes!"
+  game-stopped: "&cA jatek leallt!"
+  cannot-leave-now: "&cMost mar nem lehet kilepni a jatekbol!"
+  dig-only-shovel: "&cCsak asoval torheted a hot!"
+  auto-no-break: "&cAuto modban nem torheted ki a blokkokat!"
+  command-not-allowed: "&cEz a parancs nem engedelyezett ebben a jatekmodban!"
+  respawn-fall: "&eVisszakerultel a pályára!"
+  pvp-disabled: "&cA PvP ki van kapcsolva!"
+  reward-given: "&aJutalom kiosztva: &e{player}"
+  reward-received: "&aJutalmat kaptal a gyzelemert!"
+  player-not-found: "&cA jatekos nem talalhato!"
+  reward-usage: "&cHasznalat: /spliff reward <jatekos>"
+  plugin-enabled: "Spliff plugin enabled! Auto-start: {status}"
