@@ -223,9 +223,18 @@ public class GameManager {
     public void eliminatePlayer(Player player) {
         if (!players.contains(player)) return;
         players.remove(player);
-        spectators.add(player);
-        player.setGameMode(GameMode.SPECTATOR);
         broadcast("player-eliminated", "{player}", player.getName());
+
+        restoreInventory(player);
+        player.setGameMode(GameMode.SURVIVAL);
+
+        Location endLoc = plugin.getArenaManager().getEnd();
+        if (endLoc != null) {
+            player.teleport(endLoc);
+        } else {
+            player.teleport(plugin.getArenaManager().getLobby());
+        }
+
         checkWin();
     }
 
