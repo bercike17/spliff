@@ -89,10 +89,18 @@ public class GameManager {
         cancelLobbyCountdown();
         lobbyOpen = false;
         broadcast("not-enough-players");
+
+        Location endLoc = plugin.getArenaManager().getEnd();
+
         for (Player p : new ArrayList<>(players)) {
             restoreInventory(p);
-            p.teleport(plugin.getArenaManager().getLobby());
             p.setGameMode(GameMode.SURVIVAL);
+
+            if (endLoc != null && endLoc.getWorld() != null) {
+                p.teleport(endLoc);
+            } else {
+                p.teleport(plugin.getArenaManager().getLobby());
+            }
         }
         players.clear();
     }
