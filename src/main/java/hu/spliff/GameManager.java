@@ -222,13 +222,32 @@ public class GameManager {
         cancelLobbyCountdown();
         if (warmupTask != null) { warmupTask.cancel(); warmupTask = null; }
 
-        plugin.getArenaManager().clearArena();
+        // NE töröljük a pályát, hogy ne haljanak meg és megmaradjon a hó
+        // Ha törölni akarod, használd a /spliff delete parancsot!
+
+        Location endLoc = plugin.getArenaManager().getEnd();
 
         for (Player p : new ArrayList<>(players)) {
-            forceLeave(p);
+            restoreInventory(p);
+            p.setGameMode(GameMode.SURVIVAL);
+            if (p.isOnline()) {
+                if (endLoc != null && endLoc.getWorld() != null) {
+                    p.teleport(endLoc);
+                } else {
+                    p.teleport(plugin.getArenaManager().getLobby());
+                }
+            }
         }
         for (Player p : new ArrayList<>(spectators)) {
-            forceLeave(p);
+            restoreInventory(p);
+            p.setGameMode(GameMode.SURVIVAL);
+            if (p.isOnline()) {
+                if (endLoc != null && endLoc.getWorld() != null) {
+                    p.teleport(endLoc);
+                } else {
+                    p.teleport(plugin.getArenaManager().getLobby());
+                }
+            }
         }
 
         players.clear();
