@@ -60,11 +60,8 @@ public class GameListener implements Listener {
             if (state == GameState.WARMUP) {
                 p.teleport(plugin.getArenaManager().getSpawn());
             } else {
-                if (plugin.getConfig().getBoolean("game.respawn-on-fall", true)) {
-                    plugin.getGameManager().respawnPlayer(p);
-                } else {
-                    plugin.getGameManager().eliminatePlayer(p);
-                }
+                // RUNNING - egybol kiesik
+                plugin.getGameManager().eliminatePlayer(p);
             }
         }
     }
