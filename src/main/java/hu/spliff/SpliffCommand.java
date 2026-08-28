@@ -47,6 +47,16 @@ public class SpliffCommand implements CommandExecutor {
                 sender.sendMessage(plugin.getMessageManager().get("reward-given", "{player}", target.getName()));
                 target.sendMessage(plugin.getMessageManager().get("reward-received"));
                 break;
+            case "create":
+                if (!checkAdmin(sender)) return true;
+                plugin.getArenaManager().buildArena();
+                sender.sendMessage(plugin.getMessageManager().get("arena-created"));
+                break;
+            case "delete":
+                if (!checkAdmin(sender)) return true;
+                plugin.getArenaManager().clearArena();
+                sender.sendMessage(plugin.getMessageManager().get("arena-deleted"));
+                break;
             case "setspawn":
                 if (!checkAdmin(sender)) return true;
                 if (!(sender instanceof Player)) return true;
@@ -64,6 +74,12 @@ public class SpliffCommand implements CommandExecutor {
                 if (!(sender instanceof Player)) return true;
                 saveLoc((Player) sender, "respawn-location");
                 sender.sendMessage(plugin.getMessageManager().get("respawn-set"));
+                break;
+            case "setend":
+                if (!checkAdmin(sender)) return true;
+                if (!(sender instanceof Player)) return true;
+                saveLoc((Player) sender, "arena.end");
+                sender.sendMessage(plugin.getMessageManager().get("end-set"));
                 break;
             case "join":
                 if (!(sender instanceof Player)) return true;
