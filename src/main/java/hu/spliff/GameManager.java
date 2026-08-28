@@ -101,6 +101,7 @@ public class GameManager {
         for (Player p : new ArrayList<>(players)) {
             teleportToEnd(p);
             restoreInventory(p);
+            healPlayer(p);
             p.setGameMode(GameMode.SURVIVAL);
         }
         players.clear();
@@ -166,6 +167,7 @@ public class GameManager {
 
         players.remove(player);
         restoreInventory(player);
+        healPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
         teleportToEnd(player);
         broadcast("player-left", "{player}", player.getName());
@@ -175,6 +177,7 @@ public class GameManager {
         players.remove(player);
         spectators.remove(player);
         restoreInventory(player);
+        healPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
         if (player.isOnline()) {
             teleportToEnd(player);
@@ -188,6 +191,12 @@ public class GameManager {
         } else {
             player.teleport(plugin.getArenaManager().getLobby());
         }
+    }
+
+    private void healPlayer(Player player) {
+        player.setHealth(player.getMaxHealth());
+        player.setFoodLevel(20);
+        player.setSaturation(20);
     }
 
     public void startGame() {
@@ -225,9 +234,6 @@ public class GameManager {
         cancelLobbyCountdown();
         if (warmupTask != null) { warmupTask.cancel(); warmupTask = null; }
 
-        // NE toroljuk a palyat, nehogy meghaljanak a jatekosok!
-        // A /spliff delete torli, ha kell.
-
         for (Player p : new ArrayList<>(players)) {
             forceLeave(p);
         }
@@ -246,6 +252,7 @@ public class GameManager {
         broadcast("player-eliminated", "{player}", player.getName());
 
         restoreInventory(player);
+        healPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
         teleportToEnd(player);
 
@@ -260,9 +267,12 @@ public class GameManager {
                 Player winner = players.get(0);
                 broadcast("player-won", "{player}", winner.getName());
                 restoreInventory(winner);
+                healPlayer(winner);
                 if (plugin.getRewardManager().isAutoGive()) {
                     plugin.getRewardManager().giveRewards(winner);
                 }
+                // Azonnal teleport, nehogy meghaljon
+                teleportToEnd(winner);
             } else {
                 broadcast("no-winner");
             }
@@ -272,8 +282,12 @@ public class GameManager {
 
     public hu.spliff.GameMode getGameMode() {
         try {
-            return hu.spliff.GameMode.valueOf(plugin.getConfig().getString("game.mode", "DIG").toUpperCase());
-        } catch (Exception e) { return hu.spliff.GameMode.DIG; }
+            String mode = plugin.getConfig().getString("game.mode", "DIG").trim().toUpperCase();
+            return hu.spliff.GameMode.valueOf(mode);
+        } catch (Exception e) {
+            plugin.getLogger().warning("Ervenytelen game.mode a configban: " + plugin.getConfig().getString("game.mode") + ", DIG-re allitva.");
+            return hu.spliff.GameMode.DIG;
+        }
     }
 
     private void saveInventory(Player player) {
