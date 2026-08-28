@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class ArenaManager {
     private final SpliffPlugin plugin;
-    private Location center, spawn, lobby, respawn;
+    private Location center, spawn, lobby, respawn, end;
     private int size, layers;
 
     public ArenaManager(SpliffPlugin plugin) {
@@ -24,8 +24,9 @@ public class ArenaManager {
 
         this.center = loc(cfg, "arena.center", world, 0, 100, 0);
         this.spawn = loc(cfg, "arena.spawn", world, 0, 105, 0);
-        this.lobby = loc(cfg, "arena.lobby", world, 0, 100, 50);
+        this.lobby = loc(cfg, "arena.lobby", world, 10, 105, 10);
         this.respawn = loc(cfg, "respawn-location", world, 0, 105, 0);
+        this.end = loc(cfg, "arena.end", world, 20, 100, 20);
         this.size = cfg.getInt("arena.size", 25);
         this.layers = cfg.getInt("arena.layers", 4);
     }
@@ -80,6 +81,7 @@ public class ArenaManager {
     public Location getSpawn() { return spawn; }
     public Location getLobby() { return lobby; }
     public Location getRespawn() { return respawn; }
+    public Location getEnd() { return end; }
     public int getSize() { return size; }
     public int getLayers() { return layers; }
 }
