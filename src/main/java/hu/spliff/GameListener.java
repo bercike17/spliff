@@ -30,10 +30,11 @@ public class GameListener implements Listener {
         Block block = e.getBlock();
         if (!plugin.getArenaManager().isInArena(block)) return;
 
-        if (plugin.getGameManager().getGameMode() == GameMode.DIG) {
+        if (plugin.getGameManager().getGameMode() == hu.spliff.GameMode.DIG) {
             if (block.getType() == Material.SNOW_BLOCK) {
                 if (p.getInventory().getItemInMainHand().getType().toString().contains("SHOVEL")) {
                     e.setDropItems(false);
+                    e.setExpToDrop(0);
                 } else {
                     e.setCancelled(true);
                     p.sendMessage(plugin.getMessageManager().get("dig-only-shovel"));
@@ -60,7 +61,6 @@ public class GameListener implements Listener {
             if (state == GameState.WARMUP) {
                 p.teleport(plugin.getArenaManager().getSpawn());
             } else {
-                // RUNNING - egybol kiesik
                 plugin.getGameManager().eliminatePlayer(p);
             }
         }
@@ -96,6 +96,7 @@ public class GameListener implements Listener {
         if (plugin.getGameManager().getPlayers().contains(p)) {
             e.setKeepInventory(true);
             e.getDrops().clear();
+            e.setDroppedExp(0);
             plugin.getGameManager().eliminatePlayer(p);
         }
     }
