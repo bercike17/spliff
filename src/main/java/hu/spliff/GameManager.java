@@ -13,6 +13,7 @@ import java.util.*;
 public class GameManager {
     private final SpliffPlugin plugin;
     private GameState state = GameState.LOBBY;
+    private boolean lobbyOpen = false;
     private final List<Player> players = new ArrayList<>();
     private final List<Player> spectators = new ArrayList<>();
     private final Map<UUID, ItemStack[]> savedInventories = new HashMap<>();
@@ -27,6 +28,7 @@ public class GameManager {
     public GameManager(SpliffPlugin plugin) { this.plugin = plugin; }
 
     public GameState getState() { return state; }
+    public boolean isLobbyOpen() { return lobbyOpen; }
     public List<Player> getPlayers() { return new ArrayList<>(players); }
 
     public void startAutoStart() {
@@ -35,7 +37,7 @@ public class GameManager {
 
         int interval = plugin.getConfig().getInt("auto-start.interval-minutes", 5) * 60 * 20;
         autoStartTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (state == GameState.LOBBY && players.size() >= plugin.getConfig().getInt("auto-start.min-players", 2)) {
+            if (state == GameState.LOBBY && !lobbyOpen && players.size() >= plugin.getConfig().getInt("auto-start.min-players", 2)) {
                 startLobbyCountdown();
             }
         }, interval, interval);
@@ -45,6 +47,7 @@ public class GameManager {
         if (state != GameState.LOBBY) return;
         if (lobbyCountdownTask != null) return;
 
+        lobbyOpen = true;
         int duration = plugin.getConfig().getInt("game.lobby-countdown-seconds", 30);
         lobbyTimer = duration;
 
@@ -62,6 +65,7 @@ public class GameManager {
 
             if (lobbyTimer <= 0) {
                 cancelLobbyCountdown();
+                lobbyOpen = false;
                 startWarmup();
                 return;
             }
@@ -83,6 +87,7 @@ public class GameManager {
 
     private void abortLobbyStart() {
         cancelLobbyCountdown();
+        lobbyOpen = false;
         broadcast("not-enough-players");
         for (Player p : new ArrayList<>(players)) {
             restoreInventory(p);
@@ -126,8 +131,8 @@ public class GameManager {
     }
 
     public void joinPlayer(Player player) {
-        if (state != GameState.LOBBY) {
-            player.sendMessage(plugin.getMessageManager().get("game-in-progress"));
+        if (!lobbyOpen) {
+            player.sendMessage(plugin.getMessageManager().get("lobby-closed"));
             return;
         }
 
@@ -202,6 +207,7 @@ public class GameManager {
 
     public void stopGame() {
         state = GameState.LOBBY;
+        lobbyOpen = false;
         if (autoTask != null) { autoTask.cancel(); autoTask = null; }
         cancelLobbyCountdown();
         if (warmupTask != null) { warmupTask.cancel(); warmupTask = null; }
