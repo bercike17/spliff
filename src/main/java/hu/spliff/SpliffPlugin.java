@@ -27,7 +27,7 @@ public class SpliffPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (gameManager.getState() == GameState.RUNNING || gameManager.getState() == GameState.WARMUP) {
+        if (gameManager != null) {
             gameManager.stopGame();
         }
     }
@@ -37,7 +37,8 @@ public class SpliffPlugin extends JavaPlugin {
         messageManager.load();
         rewardManager.load();
         arenaManager.loadConfig();
-        gameManager.startAutoStart();
+        gameManager.cancelAutoStart(); // ÚJ: leállítja a régi taskot
+        gameManager.startAutoStart();  // Újraindítja az új config szerint
     }
 
     public static SpliffPlugin getInstance() { return instance; }
