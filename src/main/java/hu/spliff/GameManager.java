@@ -57,15 +57,17 @@ public class GameManager {
                 return;
             }
 
-            int min = plugin.getConfig().getInt("game.min-players", 2);
-            if (players.size() < min) {
-                abortLobbyStart();
-                return;
-            }
-
             if (lobbyTimer <= 0) {
                 cancelLobbyCountdown();
                 lobbyOpen = false;
+                
+                // CSAK ITT, a countdown vegen ellenorizzuk
+                int min = plugin.getConfig().getInt("game.min-players", 2);
+                if (players.size() < min) {
+                    abortLobbyStart();
+                    return;
+                }
+                
                 startWarmup();
                 return;
             }
@@ -266,7 +268,7 @@ public class GameManager {
             } else {
                 broadcast("no-winner");
             }
-            Bukkit.getScheduler().runTaskLater(plugin, this::stopGame, 100);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> stopGame(), 100L);
         }
     }
 
