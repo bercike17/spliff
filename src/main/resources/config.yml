@@ -117,3 +117,4 @@ messages:
   player-not-found: "&cA jatekos nem talalhato!"
   reward-usage: "&cHasznalat: /spliff reward <jatekos>"
   plugin-enabled: "Spliff plugin enabled! Auto-start: {status}"
+  lobby-closed: ""
