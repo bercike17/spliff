@@ -86,7 +86,7 @@ public class GameManager {
         broadcast("not-enough-players");
         for (Player p : new ArrayList<>(players)) {
             restoreInventory(p);
-            p.teleport(p.getWorld().getSpawnLocation());
+            p.teleport(plugin.getArenaManager().getLobby());
             p.setGameMode(GameMode.SURVIVAL);
         }
         players.clear();
@@ -156,7 +156,6 @@ public class GameManager {
         }
 
         players.remove(player);
-        spectators.remove(player);
         restoreInventory(player);
         player.teleport(plugin.getArenaManager().getLobby());
         player.setGameMode(GameMode.SURVIVAL);
@@ -230,19 +229,13 @@ public class GameManager {
         player.setGameMode(GameMode.SURVIVAL);
 
         Location endLoc = plugin.getArenaManager().getEnd();
-        if (endLoc != null) {
+        if (endLoc != null && endLoc.getWorld() != null) {
             player.teleport(endLoc);
         } else {
             player.teleport(plugin.getArenaManager().getLobby());
         }
 
         checkWin();
-    }
-
-    public void respawnPlayer(Player player) {
-        if (!players.contains(player)) return;
-        player.teleport(plugin.getArenaManager().getRespawn());
-        player.sendMessage(plugin.getMessageManager().get("respawn-fall"));
     }
 
     public void checkWin() {
