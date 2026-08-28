@@ -49,12 +49,39 @@ public class SpliffCommand implements CommandExecutor {
                 break;
             case "create":
                 if (!checkAdmin(sender)) return true;
-                plugin.getArenaManager().buildArena();
-                sender.sendMessage(plugin.getMessageManager().get("arena-created"));
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(plugin.getMessageManager().getRaw("prefix") + "&cCsak jatekos hasznalhatja!");
+                    return true;
+                }
+                Player creator = (Player) sender;
+                if (plugin.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
+                    creator.sendMessage(plugin.getMessageManager().getRaw("prefix") + "&cWorldEdit nincs telepitve!");
+                    return true;
+                }
+                try {
+                    com.sk89q.worldedit.bukkit.WorldEditPlugin we = (com.sk89q.worldedit.bukkit.WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
+                    com.sk89q.worldedit.LocalSession session = we.getSession(creator);
+                    com.sk89q.worldedit.world.World weWorld = com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(creator.getWorld());
+                    com.sk89q.worldedit.regions.Region region = session.getSelection(weWorld);
+                    
+                    com.sk89q.worldedit.math.BlockVector3 min = region.getMinimumPoint();
+                    com.sk89q.worldedit.math.BlockVector3 max = region.getMaximumPoint();
+                    
+                    plugin.getArenaManager().saveRegion(
+                        creator.getWorld(),
+                        min.getBlockX(), min.getBlockY(), min.getBlockZ(),
+                        max.getBlockX(), max.getBlockY(), max.getBlockZ()
+                    );
+                    plugin.getArenaManager().buildArena();
+                    creator.sendMessage(plugin.getMessageManager().get("arena-created"));
+                } catch (Exception e) {
+                    creator.sendMessage(plugin.getMessageManager().getRaw("prefix") + "&cEloszor jelolj ki egy teruletet WorldEdit-tel! (&7//wand&c)");
+                }
                 break;
             case "delete":
                 if (!checkAdmin(sender)) return true;
                 plugin.getArenaManager().clearArena();
+                plugin.getArenaManager().clearRegionConfig();
                 sender.sendMessage(plugin.getMessageManager().get("arena-deleted"));
                 break;
             case "setspawn":
@@ -68,12 +95,6 @@ public class SpliffCommand implements CommandExecutor {
                 if (!(sender instanceof Player)) return true;
                 saveLoc((Player) sender, "arena.lobby");
                 sender.sendMessage(plugin.getMessageManager().get("lobby-set"));
-                break;
-            case "setrespawn":
-                if (!checkAdmin(sender)) return true;
-                if (!(sender instanceof Player)) return true;
-                saveLoc((Player) sender, "respawn-location");
-                sender.sendMessage(plugin.getMessageManager().get("respawn-set"));
                 break;
             case "setend":
                 if (!checkAdmin(sender)) return true;
