@@ -1,11 +1,36 @@
+# ============================================
+# SPLIFF PLUGIN - PARANCSOK LEIRASA
+# ============================================
+
+# ---- ADMIN PARANCSOK (spliff.admin jog) ----
+
+# /spliff start       - Elinditja a lobby visszaszamlalast (ezutan mar nem lehet joinolni/leave-elni)
+# /spliff stop        - Azonnal leallitja a jatekot, mindenkit visszatelepit
+# /spliff reload      - Ujratolti a configot, uzeneteket es jutalmakat
+# /spliff reward <nev> - Kezzel adja oda a gyoztes jutalmat a jatekosnak
+# /spliff create      - Felépiti a hopalyat a configban megadott meretbol
+# /spliff delete      - Kitorli a hopalyat (hoblokkok + piros gyapju)
+# /spliff setspawn    - Beallitja a jatek kezdopontjat (ahova a jatekosokat teleportalja)
+# /spliff setlobby    - Beallitja a varakozohelyet (a mapon belul, a palya kozeleben)
+# /spliff setrespawn  - Beallitja a respawn pontot (leeses utan ide kerulnek vissza)
+# /spliff setend      - Beallitja a kiesesi celhelyet (kiesettek ide kerulnek, survival + inventory vissza)
+
+# ---- JATEKOS PARANCSOK (spliff.play jog) ----
+
+# /spliff join        - Csatlakozas a jatekhoz (csak lobby fazisban mukodik)
+# /spliff leave       - Kilepes a jatekbol (csak lobby fazisban mukodik)
+
+# ---- Palya epitesi sorrend ----
+
+# 1. /spliff create      -> Jelold ki //wandal
+# 2. /spliff setlobby    -> Allj a varakozohelyre
+# 3. /spliff setspawn    -> Allj a palya fole (indulasi pont)
+# 4. /spliff setrespawn  -> Allj oda, ahova leeses utan kerulnek
+# 5. /spliff setend      -> Allj a kiesettek celhelyere
+# 6. /spliff create      -> Felepiti a hopalyat
+# 7. /spliff start       -> Elinditja a jatekot
+# 8. /spliff delete      -> Hogyha ki akarod torollni a mapot
 arena:
-  center:
-    world: world
-    x: 0
-    y: 100
-    z: 0
-  size: 25
-  layers: 4
   spawn:
     world: world
     x: 0
@@ -35,13 +60,6 @@ game:
   shovel-slot: 0
   lobby-countdown-seconds: 30
   warmup-seconds: 10
-  respawn-on-fall: true
-
-respawn-location:
-  world: world
-  x: 0
-  y: 105
-  z: 0
 
 auto-start:
   enabled: false
@@ -69,12 +87,11 @@ messages:
   prefix: "&8[&bSpliff&8] &r"
   no-permission: "&cNincs jogod!"
   unknown-command: "&cIsmeretlen parancs!"
-  usage: "&cHasznalat: /spliff <start|stop|reload|reward|create|delete|setspawn|setlobby|setrespawn|setend|join|leave>"
+  usage: "&cHasznalat: /spliff <start|stop|reload|reward|create|delete|setspawn|setlobby|setend|join|leave>"
   spawn-set: "&aSpawn pont beallitva!"
   lobby-set: "&aLobby pont beallitva!"
-  respawn-set: "&aRespawn pont beallitva!"
   end-set: "&aKiesesi celpont beallitva!"
-  arena-created: "&aArena sikeresen letrehozva!"
+  arena-created: "&aArena sikeresen letrehozva a kijelolt teruleten!"
   arena-deleted: "&aArena sikeresen torolve!"
   reload-success: "&aConfig es uzenetek ujratoltve!"
   game-in-progress: "&cA jatek mar folyamatban van!"
@@ -94,7 +111,6 @@ messages:
   dig-only-shovel: "&cCsak asoval torheted a hot!"
   auto-no-break: "&cAuto modban nem torheted ki a blokkokat!"
   command-not-allowed: "&cEz a parancs nem engedelyezett ebben a jatekmodban!"
-  respawn-fall: "&eVisszakerultel a pályára!"
   pvp-disabled: "&cA PvP ki van kapcsolva!"
   reward-given: "&aJutalom kiosztva: &e{player}"
   reward-received: "&aJutalmat kaptal a gyzelemert!"
