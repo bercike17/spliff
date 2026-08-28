@@ -27,7 +27,7 @@ public class SpliffPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (gameManager != null) {
+        if (gameManager.getState() == GameState.RUNNING || gameManager.getState() == GameState.WARMUP) {
             gameManager.stopGame();
         }
     }
@@ -37,8 +37,9 @@ public class SpliffPlugin extends JavaPlugin {
         messageManager.load();
         rewardManager.load();
         arenaManager.loadConfig();
-        gameManager.cancelAutoStart(); // ÚJ: leállítja a régi taskot
-        gameManager.startAutoStart();  // Újraindítja az új config szerint
+        gameManager.cancelAutoStart();
+        gameManager.startAutoStart();
+        getLogger().info("Config ujratoltve. Game mode: " + gameManager.getGameMode().name());
     }
 
     public static SpliffPlugin getInstance() { return instance; }
