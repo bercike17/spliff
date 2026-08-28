@@ -31,6 +31,13 @@ public class GameManager {
     public boolean isLobbyOpen() { return lobbyOpen; }
     public List<Player> getPlayers() { return new ArrayList<>(players); }
 
+    public void cancelAutoStart() {
+        if (autoStartTask != null) {
+            autoStartTask.cancel();
+            autoStartTask = null;
+        }
+    }
+
     public void startAutoStart() {
         if (!plugin.getConfig().getBoolean("auto-start.enabled", false)) return;
         if (autoStartTask != null) return;
@@ -60,14 +67,13 @@ public class GameManager {
             if (lobbyTimer <= 0) {
                 cancelLobbyCountdown();
                 lobbyOpen = false;
-                
-                // CSAK ITT, a countdown vegen ellenorizzuk
+
                 int min = plugin.getConfig().getInt("game.min-players", 2);
                 if (players.size() < min) {
                     abortLobbyStart();
                     return;
                 }
-                
+
                 startWarmup();
                 return;
             }
@@ -92,17 +98,10 @@ public class GameManager {
         lobbyOpen = false;
         broadcast("not-enough-players");
 
-        Location endLoc = plugin.getArenaManager().getEnd();
-
         for (Player p : new ArrayList<>(players)) {
+            teleportToEnd(p);
             restoreInventory(p);
             p.setGameMode(GameMode.SURVIVAL);
-
-            if (endLoc != null && endLoc.getWorld() != null) {
-                p.teleport(endLoc);
-            } else {
-                p.teleport(plugin.getArenaManager().getLobby());
-            }
         }
         players.clear();
     }
@@ -157,11 +156,6 @@ public class GameManager {
         player.setGameMode(GameMode.ADVENTURE);
         broadcast("player-joined", "{player}", player.getName(), "{count}", String.valueOf(players.size()),
             "{max}", String.valueOf(plugin.getConfig().getInt("game.max-players", 16)));
-
-        int min = plugin.getConfig().getInt("game.min-players", 2);
-        if (players.size() >= min && lobbyCountdownTask == null) {
-            startLobbyCountdown();
-        }
     }
 
     public void leavePlayer(Player player) {
@@ -172,8 +166,8 @@ public class GameManager {
 
         players.remove(player);
         restoreInventory(player);
-        player.teleport(plugin.getArenaManager().getLobby());
         player.setGameMode(GameMode.SURVIVAL);
+        teleportToEnd(player);
         broadcast("player-left", "{player}", player.getName());
     }
 
@@ -183,6 +177,15 @@ public class GameManager {
         restoreInventory(player);
         player.setGameMode(GameMode.SURVIVAL);
         if (player.isOnline()) {
+            teleportToEnd(player);
+        }
+    }
+
+    private void teleportToEnd(Player player) {
+        Location endLoc = plugin.getArenaManager().getEnd();
+        if (endLoc != null && endLoc.getWorld() != null) {
+            player.teleport(endLoc);
+        } else {
             player.teleport(plugin.getArenaManager().getLobby());
         }
     }
@@ -222,32 +225,14 @@ public class GameManager {
         cancelLobbyCountdown();
         if (warmupTask != null) { warmupTask.cancel(); warmupTask = null; }
 
-        // NE töröljük a pályát, hogy ne haljanak meg és megmaradjon a hó
-        // Ha törölni akarod, használd a /spliff delete parancsot!
-
-        Location endLoc = plugin.getArenaManager().getEnd();
+        // NE toroljuk a palyat, nehogy meghaljanak a jatekosok!
+        // A /spliff delete torli, ha kell.
 
         for (Player p : new ArrayList<>(players)) {
-            restoreInventory(p);
-            p.setGameMode(GameMode.SURVIVAL);
-            if (p.isOnline()) {
-                if (endLoc != null && endLoc.getWorld() != null) {
-                    p.teleport(endLoc);
-                } else {
-                    p.teleport(plugin.getArenaManager().getLobby());
-                }
-            }
+            forceLeave(p);
         }
         for (Player p : new ArrayList<>(spectators)) {
-            restoreInventory(p);
-            p.setGameMode(GameMode.SURVIVAL);
-            if (p.isOnline()) {
-                if (endLoc != null && endLoc.getWorld() != null) {
-                    p.teleport(endLoc);
-                } else {
-                    p.teleport(plugin.getArenaManager().getLobby());
-                }
-            }
+            forceLeave(p);
         }
 
         players.clear();
@@ -262,13 +247,7 @@ public class GameManager {
 
         restoreInventory(player);
         player.setGameMode(GameMode.SURVIVAL);
-
-        Location endLoc = plugin.getArenaManager().getEnd();
-        if (endLoc != null && endLoc.getWorld() != null) {
-            player.teleport(endLoc);
-        } else {
-            player.teleport(plugin.getArenaManager().getLobby());
-        }
+        teleportToEnd(player);
 
         checkWin();
     }
@@ -287,7 +266,7 @@ public class GameManager {
             } else {
                 broadcast("no-winner");
             }
-            Bukkit.getScheduler().runTaskLater(plugin, () -> stopGame(), 100L);
+            Bukkit.getScheduler().runTaskLater(plugin, this::stopGame, 100L);
         }
     }
 
