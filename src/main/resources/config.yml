@@ -13,9 +13,14 @@ arena:
     z: 0
   lobby:
     world: world
-    x: 0
+    x: 10
+    y: 105
+    z: 10
+  end:
+    world: world
+    x: 20
     y: 100
-    z: 50
+    z: 20
 
 game:
   mode: DIG
@@ -64,10 +69,13 @@ messages:
   prefix: "&8[&bSpliff&8] &r"
   no-permission: "&cNincs jogod!"
   unknown-command: "&cIsmeretlen parancs!"
-  usage: "&cHasznalat: /spliff <start|stop|reload|reward|setspawn|setlobby|setrespawn|join|leave>"
+  usage: "&cHasznalat: /spliff <start|stop|reload|reward|create|delete|setspawn|setlobby|setrespawn|setend|join|leave>"
   spawn-set: "&aSpawn pont beallitva!"
   lobby-set: "&aLobby pont beallitva!"
   respawn-set: "&aRespawn pont beallitva!"
+  end-set: "&aKiesesi celpont beallitva!"
+  arena-created: "&aArena sikeresen letrehozva!"
+  arena-deleted: "&aArena sikeresen torolve!"
   reload-success: "&aConfig es uzenetek ujratoltve!"
   game-in-progress: "&cA jatek mar folyamatban van!"
   player-joined: "&e{player} &acsatlakozott! &7({count}/{max})"
